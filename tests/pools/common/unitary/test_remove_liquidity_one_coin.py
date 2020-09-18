@@ -6,6 +6,7 @@ pytestmark = [
     pytest.mark.usefixtures("add_initial_liquidity"),
 ]
 
+ETH_ADDRESS = "0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE"
 
 
 @pytest.mark.itercoins("idx")
@@ -16,7 +17,11 @@ def test_remove_one_coin(alice, swap, wrapped_coins, pool_token, idx, divisor, n
     expected = swap.calc_withdraw_one_coin(amount, idx)
     swap.remove_liquidity_one_coin(amount, idx, 0, {'from': alice})
 
-    assert wrapped_coins[idx].balanceOf(alice) == expected
+    if wrapped_coins[idx] == ETH_ADDRESS:
+        assert alice.balance() == expected
+    else:
+        assert wrapped_coins[idx].balanceOf(alice) == expected
+
     assert pool_token.balanceOf(alice) == n_coins * 10**24 - amount
 
 

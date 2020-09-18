@@ -33,6 +33,9 @@ def wrapped_coins(project, alice, pool_data, underlying_coins):
 def underlying_coins(ERC20Mock, ERC20MockNoReturn, alice, pool_data):
     coins = []
     for i, coin_data in enumerate(pool_data['coins']):
+        if coin_data.get("eth"):
+            coins.append("0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE")
+            continue
         decimals = coin_data['decimals']
         deployer = ERC20MockNoReturn if coin_data['tethered'] else ERC20Mock
         contract = deployer.deploy(f"Underlying Coin {i}", f"UC{i}", decimals, {'from': alice})
